@@ -1,0 +1,57 @@
+version: "3"
+
+services:
+  produtor:
+    build: ./produtor
+    container_name: produtor
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 8001:8000
+    volumes:
+      - ./produtor:/home/node/produtor
+    depends_on: 
+      - rabbitmq
+    command: >
+      bash -c "cd /home/node/produtor && npm install && npm run start"
+
+  consumidor:
+    build: ./consumidor
+    container_name: consumidor
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 8000:8000
+    volumes:
+      - ./consumidor:/home/node/consumidor
+    depends_on: 
+      - rabbitmq
+    command: >
+      bash -c "cd /home/node/consumidor && npm install && npm run start"
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./rabbitmq_data:/var/lib/rabbitmq/mnesia"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
