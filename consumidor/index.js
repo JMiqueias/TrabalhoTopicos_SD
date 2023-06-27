@@ -17,23 +17,23 @@ const pool = new Pool({
 
 const app = express();
 
-const AMQP_URL = 'amqp://admin:admin@rabbitmq:5672'; // URL de conexão do RabbitMQ
+const AMQP_URL = 'amqp://admin:admin@rabbitmq:5672'; // URL para conexão do RabbitMQ
 
 app.get('/', async (req, res) => {
   try {
-    // Conecta ao RabbitMQ
+    // Conexão com o RabbitMQ
     const connection = await amqp.connect(AMQP_URL);
     const channel = await connection.createChannel();
 
-    const queue = 'fila'; // Nome da fila que será consumida
+    const queue = 'fila'; // Fila que será consumida
 
-    // Declara a fila para garantir que ela exista
+    // Garantir que ela exista
     await channel.assertQueue(queue);
 
     // Consome a fila
     channel.consume(queue, async (msg) => {
       if (msg !== null) {
-        console.log('Mensagem recebida:', msg.content.toString());
+        console.log('Mensagem recebida com sucesso:', msg.content.toString());
 
         // Realiza o processamento necessário com a mensagem
         try {
@@ -55,25 +55,25 @@ app.get('/', async (req, res) => {
             ];
 
           await pool.query(insertQuery, values);
-          console.log('Dados inseridos no PostgreSQL com sucesso!');
+          console.log('Dados inseridos no DB!');
 
           } else {
-            console.log('Erro na requisição:', response.status);
+            console.log('Erro de requisição:', response.status);
           }
         } catch (error) {
-          console.log('Erro na requisição:', error);
+          console.log('Erro de requisição:', error);
         }
 
         // Confirma o processamento da mensagem
         channel.ack(msg);
       }
     });
-
-    console.log('Consumidor de RabbitMQ iniciado');
-    res.send('Consumidor de RabbitMQ iniciado');
+    
+    console.log('Consumidor do RabbitMQ iniciado');
+    res.send({message:'Consumidor do RabbitMQ iniciado'});
   } catch (error) {
-    console.error('Erro ao conectar ao RabbitMQ:', error);
-    res.status(500).send('Erro ao conectar ao RabbitMQ');
+    console.error('Erro de conecção com o RabbitMQ:', error);
+    res.status(500).send({message:'Erro de conecção com o RabbitMQ'});
   }
 });
 
