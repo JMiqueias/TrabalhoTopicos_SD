@@ -25,11 +25,11 @@ app.post('/', async (req, res) => {
     console.log('Mensagem enviada:');
     res.send({message:'Mensagem enviada para o RabbitMQ'});
   } catch (error) {
-    console.error('Erro ao conectar ao RabbitMQ:', error);
-    res.status(500).send({message:'Erro ao conectar ao RabbitMQ'});
+    console.error('Erro de conexão com o RabbitMQ:', error);
+    res.status(500).send({message:'Erro de conexão com o RabbitMQ'});
   }
 });
 
 app.listen(8000, () => {
-  console.log('Produtor iniciado na porta 3001');
+  console.log('Produtor iniciado na porta 8001');
 });

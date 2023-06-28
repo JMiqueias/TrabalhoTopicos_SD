@@ -73,10 +73,10 @@ app.get('/', async (req, res) => {
     res.send({message:'Consumidor do RabbitMQ iniciado'});
   } catch (error) {
     console.error('Erro de conecção com o RabbitMQ:', error);
-    res.status(500).send({message:'Erro de conecção com o RabbitMQ'});
+    res.status(500).send({message:'Erro de conexão com o RabbitMQ'});
   }
 });
 
 app.listen(8000, () => {
-  console.log('Consumidor iniciado na porta 3000');
+  console.log('Consumidor iniciado na porta 8000');
 });
